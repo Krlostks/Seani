@@ -47,7 +47,7 @@ class Question(models.Model):
     correct= models.CharField(max_length=5, verbose_name="Respuesta Correcta")
 
     
-    def str(self):
+    def __str__(self):
         return f"{self.module} - {self.id}"
     class Meta: 
         verbose_name = 'Pregunta'

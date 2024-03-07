@@ -7,7 +7,6 @@ from library.models import Module, Question
 class Stage(models.Model):
     stage = models.IntegerField(
         verbose_name =  "Etapa",
-        max_length=2
         )
     application_date = models.DateField(
         verbose_name = "Fecha de aplicacion"
@@ -35,7 +34,7 @@ class Exam(models.Model):
     stage = models.ForeignKey(Stage, on_delete = models.CASCADE, verbose_name = 'Etapa')
     career = models.ForeignKey(Career, on_delete = models.CASCADE, verbose_name = 'Carrera')
     modules = models.ManyToManyField(Module, through='ExamModule', verbose_name = 'Modulos')
-    questions = models.ManyToManyField('Question', through='Breakdown', verbose_name = 'Preguntas')
+    questions = models.ManyToManyField(Question, through='Breakdown', verbose_name = 'Preguntas')
     score = models.FloatField(verbose_name = 'Calificacion', default = 0.0)
     created = models.DateTimeField(auto_now_add = True, verbose_name = 'Creado')
     updated = models.DateTimeField(auto_now = True, verbose_name = 'Actualizado')
@@ -47,7 +46,7 @@ class Exam(models.Model):
     def set_questions (self):
         for module in self.modules.all():
             for question in Question.objects.filter(module=module):
-                Breakdown.objects.crate(examen = self,question = question, correct = question.correct)
+                Breakdown.objects.create(examen = self,question = question, correct = question.correct)
 
     def __str__(self):
         return f"{self.user} - {self.career} -: {self.score}"
@@ -70,10 +69,10 @@ class ExamModule(models.Model):
 
 
 class Breakdown(models.Model):
-    exam = models.ForeignKey(Exam, on_delete = models.CASCADE, verbose_name = 'Examen')
-    question = models.ForeignKey(Question, on_delete = models.CASCADE, verbose_name = 'Pregunta')
-    answer = models.CharField(verbose_name = 'Respuesta', max_lenght = 5, default = '-')
-    correct = models.CharField(verbose_name = 'Respuesta correcta', max_lenght = 5, default = '-')
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, verbose_name='Examen')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='Pregunta')
+    answer = models.CharField(verbose_name='Respuesta', max_length=5, default='-')
+    correct = models.CharField(verbose_name='Respuesta correcta', max_length=5, default='-')
 
     def __str__(self):
         return f"{self.question} - {self.answer} - {self.correct}"
