@@ -5,6 +5,9 @@ from .forms import CandidateForm
 from django.contrib.auth.models import User
 from .models import Exam
 
+def home(request):
+    user = request.user
+    return render(request, 'exam/home.html', {'user': user})
 # Create your views here.
 
 def add_candidate(request):
