@@ -1,0 +1,44 @@
+<h1>pregunta {{question.module}}</h1>
+
+{% if question.question_text %}
+    
+<h2>{{question.question_text}}</h2>
+{% endif %}
+
+{% if question.question_image  %}
+
+<img src="question.question_image.url" alt="" width="500px">
+    
+{% endif %}
+
+<form action=" {%url 'exam:question' m_id q_id %}" method="post">
+    {%csfr_token%}
+    <input type="radio" name="answer" id="ans0" value = "-"{% if anwer == '-' %} checked {%endif%}
+        
+    {% endif %}>
+    <label for="ans0">Respuesta Actual</label><br>
+    <input type="radio" name="answer" id="ans1" vlaue="A"{% if anwer == 'A' %} checked 
+        
+    {% endif %}>
+    <label for="ans1">{{question.answer1}}</label><br>
+    <input type="radio" name="answer" id="ans2"vlue="B"{% if anwer == 'B' %} checked
+        
+    {% endif %}>
+    <label for="ans2">{{question.answer2}}</label><br>
+
+    {% if question.answer3 %}
+    <input type="radio" name="answer" id="ans3" value="C"{% if anwer == 'C' %} checked
+        
+    {% endif %}>
+    <label for="ans3">{{question.answer3}}</label><br>
+    {% endif %}
+
+    {% if question.answer4 %}
+    <input type="radio" name="answer" id="ans4" value = "D"{% if anwer == 'D' %} checked 
+        
+    {% endif %}>
+    <label for="ans4">{{question.answer4}}</label><br>
+    {% endif %}
+
+    <input type="submit" value="siguiente">
+</form>

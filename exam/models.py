@@ -48,6 +48,24 @@ class Exam(models.Model):
             for question in Question.objects.filter(module=module):
                 Breakdown.objects.create(examen = self,question = question, correct = question.correct)
 
+    def compute_score(self): 
+        score= 0.0 
+        for exammodule in  self.exammodule_set.all():
+            score += exammodule.score
+
+        self.score = score /self.modules.count()
+        self.save()
+
+    def compute_score_by_module(self,m_id):
+        score= 0.0
+        for question in self.breakdown_set.filter(question_module_id=m_id):
+            if question.answer == question.correct:
+                score += 10
+        
+        module = self.exammodule_set.get(module_id =m_id)
+        module.score=score/self.questions.filter(module_id = m_id).count()
+        module.save() 
+
     def __str__(self):
         return f"{self.user} - {self.career} -: {self.score}"
     class Meta: 
