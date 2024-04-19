@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'seani.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Seani',
-        'USER':'root',
-        'PASSWORD':'',
+        'NAME': str(os.environ.get('DB_NAME')) ,
+        'USER': str(os.environ.get('DB_USER')), 
+        'PASSWORD':str(os.environ.get('DB_PASSWORD')), 
         'HOST':'localhost',
         'PORT':'3306'
     }
@@ -123,6 +123,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+#STATIC_ROOT = BASE_DIR / 'static/' # Production
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

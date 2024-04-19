@@ -1,57 +1,51 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-
-from .forms import CandidateForm
 from django.contrib.auth.models import User
-from .models import Exam
 
+from .models import Exam
+from .forms import CandidateForm
+from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 @login_required
 def home(request):
     user = request.user
     if user.is_superuser:
-         return redirect ('admin:index')
+        return redirect('admin:index')
     return render(request, 'exam/home.html', {'user': user})
 
 @login_required
-def question (request, m_id, q_id=1):
+def question(request, m_id, q_id = 1):
     exam = request.user.exam
 
     if request.method == 'POST':
         answer = request.POST['answer']
         questions = exam.breakdown_set.filter(question__module_id=m_id)
-        question= questions[q_id -1]
-        questions.answer=answer
+        question = questions[q_id - 1]
+        question.answer = answer
         question.save()
-        return redirect('exam:question', m_id, q_id +1 )
-    try :
-
-        questions = exam.breakdown_set.filter(qustion__module_id=m_id)
-        question=questions[q_id-1].questio
-        answer = questions[q_id -1].answer
-        return render(request, 'exam/question.html',{
-            'question' : question,
-            'correct' : answer,
-            'm_id' : m_id,
-            'q_id':q_id})
+        return redirect('exam:question', m_id, q_id + 1)
+    if q_id ==0:
+        return redirect('exam:home')
+    
+    try:
+        questions = exam.breakdown_set.filter(question__module_id=m_id)
+        question = questions[q_id - 1].question
+        answer = questions[q_id - 1].answer
+        return render(request, 'exam/question.html', {
+                                'question': question,
+                                'correct': answer,
+                                'm_id' : m_id,
+                                'q_id' : q_id,
+                                })
     except IndexError:
-            return redirect('exam:home')
+        return redirect('exam:home')
 
-# def question (request, m_id, q_id=1):
-#     user = request.user
-#     question = user.exam.questions.filter(module_id=m_id)
-#     question=question[q_id-1]
-#     return render(request, 'exam/question.html',{'question' : question})
-
-# Create your views here.
-
-@login_required
 def add_candidate(request):
     if request.method == 'POST':
         form = CandidateForm(request.POST)
         if form.is_valid():
-            #recibir datos
+            #Recibir datos
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             username = form.cleaned_data['username']
@@ -60,21 +54,23 @@ def add_candidate(request):
             career = form.cleaned_data['career']
             stage = form.cleaned_data['stage']
 
-            #crear usuario
+            #Crear usuario
             user = User.objects.create_user(username, email, password)
             user.first_name = first_name
             user.last_name = last_name
             user.save()
-
-            #crear examen
+            #Crear examen
             exam = Exam.objects.create(
-                user=user,
-                career=career,
-                stage=stage
+                            user=user,
+                            career=career,
+                            stage=stage
             )
+            #LLenar examen
+            exam.set_modules()
+            exam.set_questions()
+            return HttpResponse("Usuario y contraseña creado!")
 
     form = CandidateForm()
     return render(request,
                   'exam/add_candidate.html',
-                  {'form': form}
-                )
+                  {'form': form})

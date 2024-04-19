@@ -46,7 +46,7 @@ class Exam(models.Model):
     def set_questions (self):
         for module in self.modules.all():
             for question in Question.objects.filter(module=module):
-                Breakdown.objects.create(examen = self,question = question, correct = question.correct)
+                Breakdown.objects.create(exam = self,question = question, correct = question.correct)
 
     def compute_score(self): 
         score= 0.0 

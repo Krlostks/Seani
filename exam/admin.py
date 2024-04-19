@@ -1,6 +1,7 @@
 from django.contrib import admin
+from .models import Exam
 
-from .models import Stage
-
-admin.site.register(Stage)
-# Register your models here.
+@admin.register(Exam)
+class ExamAdmin(admin.ModelAdmin):
+    list_display = ['user', 'career', 'stage', 'score', 'created', 'updated']
+    list_filter = ['career', 'stage']
